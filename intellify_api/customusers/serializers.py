@@ -1,14 +1,14 @@
 from rest_framework import serializers
 from customusers.models import CustomUser
 
-# from customusers.functions import encrypt_password
-
 
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = '__all__'
         read_only_fields = ['created_on']
+
+        # passwords are stored in Hashed format and are meaningless to human eye.
         extra_kwargs = {
             'password': {'write_only': True},
         }

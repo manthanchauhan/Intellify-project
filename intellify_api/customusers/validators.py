@@ -1,3 +1,7 @@
+"""
+All the custom validators are to be placed here.
+"""
+
 from rest_framework.serializers import ValidationError
 
 
@@ -7,6 +11,7 @@ def validate_name(name):
 
     chars = list(name)
 
+    # names should contain only alphabets and spaces.
     for char in chars:
         if not ('a' <= char <= 'z') and not ('A' <= char <= 'Z') and char != ' ':
             raise ValidationError('Name should only contain alphabets and spaces')
@@ -18,6 +23,7 @@ def validate_phone(phone):
 
     digits = list(phone)
 
+    # phone number should contain digits only
     for digit in digits:
         if not ('0' <= digit <= '9'):
             raise ValidationError('Phone number should only contain numbers')
@@ -29,10 +35,12 @@ def validate_user_name(user_name):
 
     chars = list(user_name)
 
+    # user_name should contain only alphabets and numbers
     for char in chars:
         if not ('a' <= char <= 'z') and not ('A' <= char <= 'Z') and not ('0' <= char <= '9'):
             raise ValidationError('Username should not contain any special characters')
 
+    # user_name should contain at least one alphabet
     contains_char = False
     for char in chars:
         if ('a' <= char <= 'z') or ('A' <= char <= 'Z'):

@@ -12,6 +12,10 @@ from customusers.functions import check_password
 @api_view(['GET'])
 @csrf_exempt
 def users_list(request, format=None):
+    """
+    This view provides the data of all the users registered with the API.
+    **This view is meant to be used, only to test the working of the API**
+    """
     if request.method == 'GET':
         users = CustomUser.objects.all()
         serializer = CustomUserSerializer(users, many=True)
@@ -21,6 +25,45 @@ def users_list(request, format=None):
 @api_view(['GET', 'POST'])
 @csrf_exempt
 def signup(request, format=None):
+    """
+    This view registers new users with the API.
+
+    To register a new user, make a POST request to this view using the following format:
+
+    ```
+    {
+        "name": "test user",
+        "email": "test@gmail.com",
+        "phone": "1234567890",
+        "user_name": "test1",
+        "password": "password"
+    }
+    ```
+
+
+    1. name:
+        * max length 40
+        * min length 3
+        * should contain only alphabets and spaces
+    2. email: should be a valid email.
+    3. phone:
+        * should be a string of exactly 10 digits.
+    4. user_name:
+        * max length 15
+        * min length 4
+        * should contain only alphabets and digits
+        * should contain at least 1 alphabet
+    5. password:
+        * max length 15
+        * min length 8
+
+    > ***All passwords are stored in Hashed format. Unlike encoded passwords, these hashes
+    cannot be misused to recover user passwords.***
+
+    users can also make POST requests using the form available at the bottom of the page.
+
+    On successful signup a success message is shown.
+    """
     if request.method == 'POST':
         data = JSONParser().parse(request)
         serializer = CustomUserSerializer(data=data)
@@ -49,6 +92,32 @@ def signup(request, format=None):
 @api_view(['GET', 'POST'])
 @csrf_exempt
 def login(request, format=None):
+    """
+    This view logs in users, who are registered with the API.
+
+    For login, make a POST request to this view using the following format:
+
+    ```
+    {
+        "user_name": "test1",
+        "password": "password1"
+    }
+    ```
+
+    users can also make POST requests using the form available at the bottom of the page.
+
+    On successful login, details of the requested user will be returned. ex:
+
+    ```
+    {
+        "name": "test user",
+        "email": "test@gmail.com",
+        "phone": "1234567890",
+        "user_name": "test1",
+        "created_on": "YYYY-MM-DD"
+    }
+    ```
+    """
     if request.method == 'POST':
         data = JSONParser().parse(request)
         user_name = data['user_name']
@@ -80,12 +149,30 @@ def login(request, format=None):
 @api_view(['GET'])
 @csrf_exempt
 def home(request, format=None):
+    """
+    This API has 4 views:
+
+    1. **Home:** This view provides a basic introduction to the user.
+    2. **Signup:** Using this view end users can register themselves with the API. For more info
+    go to [Signup](http://intellify-user-api.herokuapp.com/users/signup).
+    3. **Login:** Using this view, registered users can log in to their accounts. For more info
+    go to [Login](http://intellify-user-api.herokuapp.com/users/login).
+    4. **All users:** This view is meant for **developer use only**, it provides the info about all
+    users registered with the API. This view is to be used to verify the functioning of the API.
+    For more info, go to [All users](http://intellify-user-api.herokuapp.com/users/all).
+
+    Each of the four views can be accessed either in this BrowsableAPI format or JSON format
+    (use `?format=json` at the end of any url).
+
+    """
     if request.method == 'GET':
         signup_context = dict()
+        signup_context['description'] = 'registers new users'
         signup_context['url'] = 'http://' + request.get_host() + '/users/signup'
         signup_context['required_params'] = ['name', 'email', 'phone', 'password', 'user_name']
 
         login_context = dict()
+        login_context['description'] = 'logs in registered users'
         login_context['url'] = 'http://' + request.get_host() + '/users/login'
         login_context['required_params'] = ['user_name', 'password']
 

@@ -70,11 +70,9 @@ def signup(request, format=None):
 
         if serializer.is_valid():
             serializer.save()
-            return Response({"success": True}, status=status.HTTP_201_CREATED,
-                            )
+            return Response({"success": True}, status=status.HTTP_201_CREATED)
 
-        return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST,
-                        )
+        return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
     else:
         context = dict()
         context['method'] = 'POST'
@@ -86,7 +84,7 @@ def signup(request, format=None):
             'password': 'min_8_characters',
             'user_name': 'only_alphabets&nums',
         }
-        return Response(context, status=status.HTTP_200_OK, )
+        return Response(context, status=status.HTTP_200_OK)
 
 
 @api_view(['GET', 'POST'])
@@ -126,40 +124,40 @@ def login(request, format=None):
         try:
             user = CustomUser.objects.get(user_name=user_name)
         except ObjectDoesNotExist:
-            return Response({"success": False, "error": "Invalid user_name"}, status=status.HTTP_400_BAD_REQUEST,
-                            )
+            return Response({"success": False, "error": "Invalid user_name"}, status=status.HTTP_400_BAD_REQUEST)
 
         password_hash = user.password
 
         if not check_password(password, password_hash):
-            return Response({"success": False, "error": "Invalid password"}, status=status.HTTP_400_BAD_REQUEST,
-                            )
+            return Response({"success": False, "error": "Invalid password"}, status=status.HTTP_400_BAD_REQUEST)
         else:
             serializer = CustomUserSerializer(user)
-            return Response({'data': serializer.data}, status=status.HTTP_200_OK,
-                            )
+            return Response({'data': serializer.data}, status=status.HTTP_200_OK)
 
     elif request.method == 'GET':
         context = dict()
         context['method'] = 'POST'
         context['required_params'] = ['user_name', 'password']
-        return Response(context, status=status.HTTP_200_OK, )
+        return Response(context, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
 @csrf_exempt
 def home(request, format=None):
     """
-    This API has 4 views:
+    This API has 5 views:
 
     1. **Home:** This view provides a basic introduction to the user.
     2. **Signup:** Using this view end users can register themselves with the API. For more info
-    go to [Signup](http://intellify-user-api.herokuapp.com/users/signup).
+    go to [Signup](https://intellify-user-api.herokuapp.com/users/signup).
     3. **Login:** Using this view, registered users can log in to their accounts. For more info
-    go to [Login](http://intellify-user-api.herokuapp.com/users/login).
+    go to [Login](https://intellify-user-api.herokuapp.com/users/login).
     4. **All users:** This view is meant for **developer use only**, it provides the info about all
     users registered with the API. This view is to be used to verify the functioning of the API.
-    For more info, go to [All users](http://intellify-user-api.herokuapp.com/users/all).
+    For more info, go to [All users](https://intellify-user-api.herokuapp.com/users/all).
+    5. **Ping:** This view is provided to check server status, for more info see,
+    [Ping](https://intellify-user-api.herokuapp.com/ping)
+
 
     Each of the four views can be accessed either in this BrowsableAPI format or JSON format
     (use `?format=json` at the end of any url).
@@ -176,5 +174,20 @@ def home(request, format=None):
         login_context['url'] = 'http://' + request.get_host() + '/users/login'
         login_context['required_params'] = ['user_name', 'password']
 
-        return Response({'signup': signup_context, 'login': login_context}, status=status.HTTP_200_OK,
-                        )
+        return Response({'signup': signup_context, 'login': login_context}, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@csrf_exempt
+def ping(request, format=None):
+    """
+    This view is implemented to check server status, a GET request at this view will return:
+
+    ```
+    {
+        "status": "OK"
+    }
+    ```
+    """
+    if request.method == 'GET':
+        return Response({'status': 'OK'}, status=status.HTTP_200_OK)

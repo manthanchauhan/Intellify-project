@@ -1,5 +1,4 @@
 from django.db import models
-from django.core.validators import ValidationError
 from customusers.validators import validate_name, validate_phone, validate_user_name, validate_password
 from customusers.functions import encrypt_password
 

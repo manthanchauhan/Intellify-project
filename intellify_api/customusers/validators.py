@@ -1,4 +1,4 @@
-from django.core.validators import ValidationError
+from rest_framework.serializers import ValidationError
 
 
 def validate_name(name):

@@ -1,4 +1,4 @@
-from django.core.validators import ValidationError
+from rest_framework.serializers import ValidationError
 
 
 def validate_name(name):
@@ -46,3 +46,5 @@ def validate_user_name(user_name):
 def validate_password(password):
     if len(password) < 8:
         raise ValidationError('Password must contain at least 8 characters')
+    if len(password) > 15:
+        raise ValidationError('password can have at most 15 characters')

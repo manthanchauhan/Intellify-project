@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from customusers.models import CustomUser
+
 # from customusers.functions import encrypt_password
 
 

@@ -19,4 +19,5 @@ from customusers import views
 urlpatterns = [
     path('users/', include('customusers.urls')),
     path('', views.home),
+    path('ping', views.ping),
 ]
